@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-15]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout PicoRVD
@@ -37,24 +37,22 @@ jobs:
           cmake --version
           make --version
           arm-none-eabi-gcc --version
-          xxd -h 2>&1 | head
+          command -v xxd
 
       - name: Install dependencies (Linux)
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt-get update && sudo apt-get install -y build-essential git cmake gcc-arm-none-eabi gcc-riscv64-unknown-elf
 
       - name: Install dependencies (Mac)
-        if: ${{ matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'macos-15' }}
         run: |
-          brew install cmake make
-          brew install gcc-arm-embedded
-
+          brew install --cask gcc-arm-embedded
           brew tap riscv-software-src/riscv
           brew trust riscv-software-src/riscv
           brew install riscv-tools
 
       - name: Build Project (CH32V003 Blinky)
-        if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'macos-15' }}
         working-directory: ${{github.workspace}}/PicoRVD
         shell: bash
         run: |
