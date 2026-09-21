@@ -24,6 +24,20 @@ jobs:
       - name: Checkout pico-sdk submodules
         working-directory: ${{github.workspace}}/pico-sdk
         run: git submodule update --init
+      
+      - name: Patch Pico SDK 1.5.1 for CMake 4
+        if: ${{ matrix.os == 'windows-latest' || matrix.os == 'macos-15' }}
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            sed -i '' \
+              's/cmake_minimum_required(VERSION 3.4)/cmake_minimum_required(VERSION 3.5)/' \
+              "${{ github.workspace }}/pico-sdk/tools/pioasm/CMakeLists.txt"
+          else
+            sed -i \
+              's/cmake_minimum_required(VERSION 3.4)/cmake_minimum_required(VERSION 3.5)/' \
+              "${{ github.workspace }}/pico-sdk/tools/pioasm/CMakeLists.txt"
+          fi
 
       - name: Install dependencies (Windows)
         if: ${{ matrix.os == 'windows-latest' }}
